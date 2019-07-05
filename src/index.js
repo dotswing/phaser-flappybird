@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 import logoImg from "./assets/logo.png";
-import sky from "./assets/sky.png"
+import sky from "./assets/ocean_sky.png"
 import land from "./assets/land.png"
 import bird from "./assets/bird.png";
+import building from "./assets/building.png";
 
 var config = {
     type: Phaser.AUTO,
@@ -22,9 +23,8 @@ var config = {
     }
 };
 
-var platforms;
-
 var landImg;
+var buildingImg;
 var iter = 0;
 var birdImg;
 var cursors;
@@ -34,10 +34,15 @@ function preload() {
   this.load.image('sky', sky);
   this.load.image("logo", logoImg);
   this.load.image("land", land);
+  this.load.image("building", building);
   this.load.spritesheet("bird", bird, { frameWidth: 34, frameHeight: 24 });
 }
 
 function create() {
+  this.add.tileSprite(400, 300, 800, 600, 'sky');
+  landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
+  buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building')
+  
   // this.physics.startSystem(Phaser.Physics.ARCADE);
   this.add.image(400, 300, 'sky');
   birdImg = this.physics.add.sprite(240, 320, 'bird');
@@ -46,8 +51,7 @@ function create() {
   birdImg.body.collideWorldBounds = true;
   platforms = this.physics.add.staticGroup();
 
-  // 112 Is land image height
-  landImg = this.add.tileSprite(400, 600 - (112/2), 800, 112, 'land');
+  const bird = this.physics.add.sprite(240, 320, 'bird', 0);
 
   this.anims.create({
     key: 'fly',
@@ -60,6 +64,7 @@ function create() {
 
 function update() {
   landImg.tilePositionX = iter * 100;
+  buildingImg.tilePositionX = iter * 30;
   iter += 0.01;
   if (cursors.space.isDown) {   
     birdImg.body.velocity.y = -400;
