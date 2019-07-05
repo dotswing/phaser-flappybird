@@ -6,21 +6,24 @@ import bird from "./assets/bird.png";
 import building from "./assets/building.png";
 
 var config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  scale: {
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y: 300 },
+      debug: false
     }
+  },
+  scene: {
+    preload: preload,
+    create: create,
+    update: update
+  }
 };
 
 var landImg;
@@ -30,10 +33,10 @@ const game = new Phaser.Game(config);
 
 function preload() {
   this.load.image('sky', sky);
-  this.load.image("logo", logoImg);
-  this.load.image("land", land);
-  this.load.image("building", building);
-  this.load.spritesheet("bird", bird, { frameWidth: 34, frameHeight: 24 });
+  this.load.image('logo', logoImg);
+  this.load.image('land', land);
+  this.load.image('building', building);
+  this.load.spritesheet('bird', bird, { frameWidth: 34, frameHeight: 24 });
 }
 
 function create() {
@@ -42,8 +45,7 @@ function create() {
   landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
   buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building')
 
-
-  const bird = this.physics.add.sprite(240, 320, 'bird', 0);
+  const bird = this.physics.add.sprite(400, 300, 'bird', 0);
 
   this.anims.create({
     key: 'fly',
