@@ -32,6 +32,7 @@ var iter = 0;
 var birdImg;
 var cursors;
 var platforms;
+var gameOver = false;
 const game = new Phaser.Game(config);
 
 function preload() {
@@ -44,14 +45,12 @@ function preload() {
 
 function create() {
   this.add.tileSprite(400, 300, 800, 600, 'sky');
-  landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
   buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building')
   
-  birdImg = this.physics.add.sprite(400, 300, 'bird');
+  birdImg = this.physics.add.sprite(400, 100, 'bird');
   birdImg.body.bounce.y = 0.25;
-  birdImg.body.gravity.y = 1500;
+  birdImg.body.gravity.y = 1000;
   birdImg.body.collideWorldBounds = true;
-  platforms = this.physics.add.staticGroup();
 
   this.anims.create({
     key: 'fly',
@@ -60,14 +59,34 @@ function create() {
   });
   birdImg.anims.play('fly');
   cursors = this.input.keyboard.createCursorKeys();
+  
+  platforms = this.physics.add.staticGroup();
+  platforms.create(400, 568).setScale(30, 5).refreshBody();
+  
+  landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
+  this.physics.add.collider(birdImg, platforms);
 }
 
 function update() {
+  if (gameOver) {
+    return
+  }
+
   landImg.tilePositionX = iter * 100;
   buildingImg.tilePositionX = iter * 30;
   iter += 0.01;
+  
   if (cursors.space.isDown) {   
     birdImg.body.velocity.y = -400;
     birdImg.anims.play('fly');
   }
+
+  if (birdImg.body.touching.down) {
+    birdImg.anims.stop('fly');
+    hitLand()
+  }
+}
+
+function hitLand(x, y) {
+  gameOver = true;
 }
