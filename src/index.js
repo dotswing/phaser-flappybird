@@ -69,6 +69,11 @@ function preload() {
 
   this.load.image('gameover', require('./assets/gameover.png'));
   this.load.image('pipe', pipe);
+
+  this.load.image('Wat', require('./assets/Wat.png'));
+  this.load.image('Fon', require('./assets/Fon.png'));
+  this.load.image('Noomz', require('./assets/Noomz.png'));
+  this.load.image('Noomz2', require('./assets/Noomz2.png'));
 }
 
 function create() {
@@ -76,6 +81,11 @@ function create() {
   landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
   buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building');
   scoreGroup = this.add.group();
+
+  this.add.image(30, 30, 'Wat').setScale(0.1, 0.1).setRandomPosition(650, 20, 100, 400);
+  this.add.image(50, 50, 'Fon').setScale(0.1, 0.1).setRandomPosition(650, 20, 100, 400);
+  this.add.image(90, 90, 'Noomz').setScale(0.1, 0.1).setRandomPosition(650, 20, 100, 400);
+  this.add.image(100, 100, 'Noomz2').setScale(0.1, 0.1).setRandomPosition(650, 20, 100, 400);
   
   birdImg = this.physics.add.sprite(400, 100, 'bird');
   birdImg.body.bounce.y = 0.25;
