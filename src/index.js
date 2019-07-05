@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import logoImg from "./assets/logo.png";
 import sky from "./assets/ocean_sky.png"
 import land from "./assets/land.png"
+import pipe from "./assets/pipe.png"
 import bird from "./assets/bird.png";
 import building from "./assets/building.png";
 
@@ -9,13 +10,10 @@ var config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scale: {
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 300 },
+      gravity: { y: 0 },
       debug: false
     }
   },
@@ -26,6 +24,9 @@ var config = {
   }
 };
 
+var lowerPipes;
+var upperPipes;
+
 var landImg;
 var buildingImg;
 var iter = 0;
@@ -34,6 +35,9 @@ var cursors;
 var platforms;
 var gameOver = false;
 const game = new Phaser.Game(config);
+var keyboards
+var player
+var emptySpace
 
 function preload() {
   this.load.image('sky', sky);
@@ -41,6 +45,7 @@ function preload() {
   this.load.image('land', land);
   this.load.image('building', building);
   this.load.spritesheet('bird', bird, { frameWidth: 34, frameHeight: 24 });
+  this.load.image("pipe", pipe)
 }
 
 function create() {
@@ -58,13 +63,40 @@ function create() {
     repeat: -1,
   });
   birdImg.anims.play('fly');
-  cursors = this.input.keyboard.createCursorKeys();
+
+  upperPipes = this.physics.add.group({
+    key: 'pipe',
+    repeat: 1,
+    setXY: { x: 600, y: 0, stepX: 200 },
+    setScale: {x : 1, y: -100}
+  })
+
+  lowerPipes = this.physics.add.group({
+    key: 'pipe',
+    repeat: 1,
+    setXY: { x: 600, y: 500, stepX: 200 },
+    setScale: {x : 1, y: 100}
+  });
+
+  emptySpace = this.physics.add
+
+  lowerPipes.children.iterate(function (child) {
+    child.setVelocityX(-60.6)
+  })
+  upperPipes.children.iterate(function (child) {
+    child.setVelocityX(-60.6)
+  })
   
   platforms = this.physics.add.staticGroup();
   platforms.create(400, 568).setScale(30, 5).refreshBody();
   
   landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
+
   this.physics.add.collider(birdImg, platforms);
+  this.physics.add.overlap(birdImg, lowerPipes, endGame, null, this)
+  this.physics.add.overlap(birdImg, upperPipes, endGame, null, this)
+
+  cursors = this.input.keyboard.createCursorKeys();
 }
 
 function update() {
@@ -83,10 +115,40 @@ function update() {
 
   if (birdImg.body.touching.down) {
     birdImg.anims.stop('fly');
-    hitLand()
+    endGame()
   }
+
+  lowerPipes.children.iterate(function (child) {
+    let posX = child.x
+    if (posX < -50) {
+      child.x = 850
+      child.scaleY = randomLowerPipe()
+    }
+  })
+
+  upperPipes.children.iterate(function (child) {
+    let posX = child.x
+    if (posX < -50) {
+      child.x = 850
+      child.scaleY = randomUpperPipe()
+    }
+  })
 }
 
-function hitLand(x, y) {
+function endGame(x, y) {
   gameOver = true;
+  lowerPipes.children.iterate(function (child) {
+    child.setVelocityX(0)
+  })
+  upperPipes.children.iterate(function (child) {
+    child.setVelocityX(0)
+  })
+}
+
+function randomLowerPipe() {
+  return Math.floor(Math.random() * 125) + 100
+}
+
+function randomUpperPipe() {
+  return (Math.floor(Math.random() * 125) + 100) * -1
 }
