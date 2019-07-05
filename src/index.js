@@ -3,6 +3,7 @@ import sky from './assets/ocean_sky.png';
 import land from './assets/land.png';
 import bird from './assets/bird.png';
 import building from './assets/building.png';
+import gameover from './assets/gameover.png';
 
 var config = {
   type: Phaser.AUTO,
@@ -52,6 +53,8 @@ function preload() {
   this.load.image('font_big_7', require('./assets/font_big_7.png'));
   this.load.image('font_big_8', require('./assets/font_big_8.png'));
   this.load.image('font_big_9', require('./assets/font_big_9.png'));
+
+  this.load.image('gameover', require('./assets/gameover.png'));
 }
 
 function create() {
@@ -74,6 +77,9 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   this.input.keyboard.addKey('SPACE').on('down', function () {
+    if (gameOver) {
+      return
+    }b    
     score++;
     showScore(score);
   });
@@ -103,7 +109,7 @@ function update() {
 
   if (birdImg.body.touching.down) {
     birdImg.anims.stop('fly');
-    hitLand()
+    hitLand(this)
   }
 }
 
@@ -115,6 +121,7 @@ function showScore(score) {
   }
 }
 
-function hitLand(x, y) {
+function hitLand(self) {
   gameOver = true;
+  self.add.image(400, 300, 'gameover');
 }
