@@ -54,7 +54,7 @@ function create() {
   
   birdImg = this.physics.add.sprite(400, 100, 'bird');
   birdImg.body.bounce.y = 0.25;
-  birdImg.body.gravity.y = 1000;
+  birdImg.body.gravity.y = 1200;
   birdImg.body.collideWorldBounds = true;
 
   this.anims.create({
@@ -93,8 +93,8 @@ function create() {
   landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
 
   this.physics.add.collider(birdImg, platforms);
-  this.physics.add.overlap(birdImg, lowerPipes, endGame, null, this)
-  this.physics.add.overlap(birdImg, upperPipes, endGame, null, this)
+  // this.physics.add.overlap(birdImg, lowerPipes, endGame, null, this)
+  // this.physics.add.overlap(birdImg, upperPipes, endGame, null, this)
 
   cursors = this.input.keyboard.createCursorKeys();
 }
@@ -109,7 +109,7 @@ function update() {
   iter += 0.01;
   
   if (cursors.space.isDown) {   
-    birdImg.body.velocity.y = -400;
+    birdImg.body.velocity.y = -300;
     birdImg.anims.play('fly');
   }
 
