@@ -35,13 +35,14 @@ var cursors;
 var platforms;
 var gameOver = false;
 var replay = document.getElementById('replay')
-
+var phaser
 const game = new Phaser.Game(config);
 var keyboards
 var player
 var emptySpace
 
 function preload() {
+  phaser = this
   replay.style.display = "none"
 
   this.load.image('sky', sky);
@@ -120,7 +121,6 @@ function update() {
   if (birdImg.body.touching.down) {
     birdImg.anims.stop('fly');
     endGame()
-    restart(this)
   }
 
   lowerPipes.children.iterate(function (child) {
@@ -140,7 +140,7 @@ function update() {
   })
 }
 
-function endGame() {
+function endGame(x, y) {
   gameOver = true;
   lowerPipes.children.iterate(function (child) {
     child.setVelocityX(0)
@@ -148,6 +148,7 @@ function endGame() {
   upperPipes.children.iterate(function (child) {
     child.setVelocityX(0)
   })
+  restart()
 }
 
 function randomLowerPipe() {
@@ -158,7 +159,7 @@ function randomUpperPipe() {
   return (Math.floor(Math.random() * 125) + 100) * -1
 }
 
-function restart(phaser) {
+function restart() {
   replay.style.display = "flex"
   replay.addEventListener("click", (e) =>{ 
       gameOver = false;
