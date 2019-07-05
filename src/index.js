@@ -26,6 +26,8 @@ var platforms;
 
 var landImg;
 var iter = 0;
+var birdImg;
+var cursors;
 const game = new Phaser.Game(config);
 
 function preload() {
@@ -36,9 +38,12 @@ function preload() {
 }
 
 function create() {
+  // this.physics.startSystem(Phaser.Physics.ARCADE);
   this.add.image(400, 300, 'sky');
-  const bird = this.physics.add.sprite(240, 320, 'bird', 0);
-
+  birdImg = this.physics.add.sprite(240, 320, 'bird');
+  birdImg.body.bounce.y = 0.25;
+  birdImg.body.gravity.y = 1500;
+  birdImg.body.collideWorldBounds = true;
   platforms = this.physics.add.staticGroup();
 
   // 112 Is land image height
@@ -49,11 +54,15 @@ function create() {
     frames: this.anims.generateFrameNames('bird', { start: 0, end: 3 }),
     repeat: -1,
   });
-
-  bird.anims.play('fly');
+  birdImg.anims.play('fly');
+  cursors = this.input.keyboard.createCursorKeys();
 }
 
 function update() {
   landImg.tilePositionX = iter * 100;
   iter += 0.01;
+  if (cursors.space.isDown) {   
+    birdImg.body.velocity.y = -400;
+    birdImg.anims.play('fly');
+  }
 }
