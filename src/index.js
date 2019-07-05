@@ -79,7 +79,15 @@ function create() {
   this.input.keyboard.addKey('SPACE').on('down', function () {
     if (gameOver) {
       return
-    }b    
+    } 
+    score++;
+    showScore(score);
+  });
+
+  this.input.on('pointerdown', function () {
+    if (gameOver) {
+      return
+    } 
     score++;
     showScore(score);
   });
