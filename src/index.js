@@ -1,10 +1,10 @@
-import Phaser from "phaser";
-import logoImg from "./assets/logo.png";
-import sky from "./assets/ocean_sky.png"
-import land from "./assets/land.png"
-import pipe from "./assets/pipe.png"
-import bird from "./assets/bird.png";
-import building from "./assets/building.png";
+import Phaser from 'phaser';
+import sky from './assets/ocean_sky.png'
+import land from './assets/land.png'
+import pipe from './assets/pipe.png'
+import bird from './assets/bird.png';
+import building from './assets/building.png';
+import gameover from './assets/gameover.png';
 
 var config = {
   type: Phaser.AUTO,
@@ -16,6 +16,9 @@ var config = {
       gravity: { y: 0 },
       debug: false
     }
+  },
+  scale: {
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   scene: {
     preload: preload,
@@ -33,24 +36,46 @@ var iter = 0;
 var birdImg;
 var cursors;
 var platforms;
+var scoreGroup;
+var score = 0;
 var gameOver = false;
+var replay = document.getElementById('replay')
+var phaser
 const game = new Phaser.Game(config);
-var keyboards
-var player
-var emptySpace
+var self;
+var keyboards;
+var player;
+var emptySpace;
 
 function preload() {
+  phaser = this
+  replay.style.display = "none"
+
   this.load.image('sky', sky);
-  this.load.image('logo', logoImg);
   this.load.image('land', land);
   this.load.image('building', building);
   this.load.spritesheet('bird', bird, { frameWidth: 34, frameHeight: 24 });
-  this.load.image("pipe", pipe)
+
+  this.load.image('font_big_0', require('./assets/font_big_0.png'));
+  this.load.image('font_big_1', require('./assets/font_big_1.png'));
+  this.load.image('font_big_2', require('./assets/font_big_2.png'));
+  this.load.image('font_big_3', require('./assets/font_big_3.png'));
+  this.load.image('font_big_4', require('./assets/font_big_4.png'));
+  this.load.image('font_big_5', require('./assets/font_big_5.png'));
+  this.load.image('font_big_6', require('./assets/font_big_6.png'));
+  this.load.image('font_big_7', require('./assets/font_big_7.png'));
+  this.load.image('font_big_8', require('./assets/font_big_8.png'));
+  this.load.image('font_big_9', require('./assets/font_big_9.png'));
+
+  this.load.image('gameover', require('./assets/gameover.png'));
+  this.load.image('pipe', pipe);
 }
 
 function create() {
   this.add.tileSprite(400, 300, 800, 600, 'sky');
-  buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building')
+  landImg = this.add.tileSprite(400, 600 - ( 112 / 2 ), 800, 112, 'land');
+  buildingImg = this.add.tileSprite(400, 600 - (( 109 / 2 ) + 112 ), 800, 109, 'building');
+  scoreGroup = this.add.group();
   
   birdImg = this.physics.add.sprite(400, 100, 'bird');
   birdImg.body.bounce.y = 0.25;
@@ -63,6 +88,14 @@ function create() {
     repeat: -1,
   });
   birdImg.anims.play('fly');
+
+  this.input.keyboard.addKey('SPACE').on('down', function () {
+    if (gameOver) {
+      return
+    } 
+    score++;
+    showScore(score);
+  });
 
   upperPipes = this.physics.add.group({
     key: 'pipe',
@@ -97,6 +130,8 @@ function create() {
   // this.physics.add.overlap(birdImg, upperPipes, endGame, null, this)
 
   cursors = this.input.keyboard.createCursorKeys();
+
+  showScore(score);
 }
 
 function update() {
@@ -143,6 +178,8 @@ function endGame(x, y) {
   upperPipes.children.iterate(function (child) {
     child.setVelocityX(0)
   })
+  phaser.add.image(400, 200, 'gameover');
+  restart()
 }
 
 function randomLowerPipe() {
@@ -151,4 +188,21 @@ function randomLowerPipe() {
 
 function randomUpperPipe() {
   return (Math.floor(Math.random() * 125) + 100) * -1
+}
+
+function showScore(score) {
+  scoreGroup.clear(true);
+  const digits = score.toString().split('');
+  for(var i = 0; i < digits.length; i++) {
+    scoreGroup.create(20 + (i * 25), 30, 'font_big_' + digits[i]);
+  }
+}
+
+function restart() {
+  replay.style.display = "flex"
+  replay.addEventListener("click", (e) =>{ 
+      gameOver = false;
+      score = 0; 
+      phaser.scene.restart()
+  })
 }
