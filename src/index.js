@@ -39,12 +39,18 @@ var platforms;
 var scoreGroup;
 var score = 0;
 var gameOver = false;
+var replay = document.getElementById('replay')
+
 const game = new Phaser.Game(config);
-var keyboards
-var player
-var emptySpace
+var self;
+var keyboards;
+var player;
+var emptySpace;
 
 function preload() {
+  self = this;
+  replay.style.display = "none"
+
   this.load.image('sky', sky);
   this.load.image('land', land);
   this.load.image('building', building);
@@ -84,14 +90,6 @@ function create() {
   birdImg.anims.play('fly');
 
   this.input.keyboard.addKey('SPACE').on('down', function () {
-    if (gameOver) {
-      return
-    } 
-    score++;
-    showScore(score);
-  });
-
-  this.input.on('pointerdown', function () {
     if (gameOver) {
       return
     } 
@@ -154,6 +152,7 @@ function update() {
   if (birdImg.body.touching.down) {
     birdImg.anims.stop('fly');
     endGame()
+    restart(this)
   }
 
   lowerPipes.children.iterate(function (child) {
@@ -173,7 +172,7 @@ function update() {
   })
 }
 
-function endGame(x, y) {
+function endGame() {
   gameOver = true;
   lowerPipes.children.iterate(function (child) {
     child.setVelocityX(0)
@@ -181,6 +180,7 @@ function endGame(x, y) {
   upperPipes.children.iterate(function (child) {
     child.setVelocityX(0)
   })
+  self.add.image(400, 200, 'gameover');
 }
 
 function randomLowerPipe() {
@@ -197,4 +197,12 @@ function showScore(score) {
   for(var i = 0; i < digits.length; i++) {
     scoreGroup.create(20 + (i * 25), 30, 'font_big_' + digits[i]);
   }
+}
+
+function restart(phaser) {
+  replay.style.display = "flex"
+  replay.addEventListener("click", (e) =>{ 
+      gameOver = false;
+      phaser.scene.restart()
+  })
 }
